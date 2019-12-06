@@ -1,5 +1,5 @@
-#ifndef OTHELLO_MINI_BASE_H
-#define OTHELLO_MINI_BASE_H
+#ifndef OTHELLO_MINI_AGENT_BASE_H
+#define OTHELLO_MINI_AGENT_BASE_H
 
 #include "../const.h"
 #include "../board.h"
@@ -13,4 +13,4 @@ public:
 };
 
 
-#endif //OTHELLO_MINI_BASE_H
+#endif //OTHELLO_MINI_AGENT_BASE_H
