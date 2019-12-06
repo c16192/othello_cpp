@@ -14,6 +14,17 @@ Tensor2d<T>::Tensor2d(int _h, int _w): h(_h), w(_w) {
 }
 
 template <typename T>
+Tensor2d<T>::Tensor2d(Tensor2d &t): h(t.h), w(t.w) {
+    arr = new T*[h];
+    for(int i = 0; i < h; i++) {
+        arr[i] = new T[w];
+        for(int j = 0; j < w; j++) {
+            arr[i][j] = t[i][j];
+        }
+    }
+}
+
+template <typename T>
 Tensor2d<T>::~Tensor2d() {
     for(int i = 0; i < h; i++) {
         delete[] arr[i];

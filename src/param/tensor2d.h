@@ -12,6 +12,7 @@ private:
 
 public:
     Tensor2d(int _h, int _w);
+    Tensor2d(Tensor2d &t);
     ~Tensor2d();
 
     void print();
