@@ -1,4 +1,5 @@
 #include "board.h"
+#include "utils.h"
 #include <iostream>
 using namespace std;
 
@@ -24,17 +25,22 @@ Board::Board() {
     currentPlayer = BLACK;
 }
 
+Board::Board(Board &b) {
+    for(int i = 0; i < BOARD_SIZE; i++) {
+        for(int j = 0; j < BOARD_SIZE; j++) {
+            this->board[i][j] = b.board[i][j];
+            this->is_front[i][j] = b.is_front[i][j];
+        }
+    }
+    this->currentPlayer = b.currentPlayer;
+}
+
 bool Board::on_board(int h, int w) {
     return (h >= 0) && (h < BOARD_SIZE) && (w >= 0) && (w < BOARD_SIZE);
 }
 
 void Board::print(void) {
-    for(int i = 0; i < BOARD_SIZE; i++) {
-        for (int j = 0; j < BOARD_SIZE; j++) {
-            cout << this->board[i][j] << " ";
-        }
-        cout << endl;
-    }
+    print_board(board);
 }
 
 /* Iterates over a row, column, or diagonal in a given direction
@@ -61,8 +67,10 @@ char Board::opponent() {
     return currentPlayer == BLACK ? WHITE : BLACK;
 }
 
-bool Board::is_legal_move(int h, int w) {
-if(!Board::on_board(h, w) || !is_front[h][w]) return false;
+bool Board::is_legal_move(Move move) {
+    int h = move.h;
+    int w = move.w;
+    if(!Board::on_board(h, w) || !is_front[h][w]) return false;
     for(int dir = 0; dir < NUM_DIR; dir++) {
         int _h = h;
         int _w = w;
@@ -74,7 +82,9 @@ if(!Board::on_board(h, w) || !is_front[h][w]) return false;
     return false;
 }
 
-bool Board::make_move(int h, int w) {
+bool Board::make_move(Move move) {
+    int h = move.h;
+    int w = move.w;
     if(!Board::on_board(h, w) || !is_front[h][w]) return false;
     bool is_legal_move = false;
     for(int dir = 0; dir < NUM_DIR; dir++) {
@@ -124,7 +134,7 @@ bool Board::exist_moves() {
     for(int i = 0; i < BOARD_SIZE; i++) {
         for(int j = 0; j < BOARD_SIZE; j++) {
             if(!is_front[i][j]) continue;
-            if(is_legal_move(i, j)) return true;
+            if(is_legal_move(Move(i, j))) return true;
         }
     }
     return false;
@@ -136,4 +146,26 @@ void Board::switch_players() {
 
 char Board::get_player() {
     return currentPlayer;
+}
+
+Board::Move::Move(int _h, int _w) : h(_h), w(_w) {}
+
+Board::Score::Score(int _b, int _w): black(_b), white(_w) {}
+
+void Board::get_board_state(char (&b)[BOARD_SIZE][BOARD_SIZE]) {
+    for(int i = 0; i < BOARD_SIZE; i++)
+        for(int j = 0; j < BOARD_SIZE; j++)
+            b[i][j] = board[i][j];
+}
+
+Board::Score Board::get_result() {
+    int b = 0, w = 0;
+    for(int i = 0; i < BOARD_SIZE; i++) {
+        for(int j = 0; j < BOARD_SIZE; j++) {
+            char cell = board[i][j];
+            if(cell == BLACK) b++;
+            else if(cell == WHITE) w++;
+        }
+    }
+    return Score(b, w);
 }

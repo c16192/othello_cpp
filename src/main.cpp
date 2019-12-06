@@ -1,17 +1,13 @@
 #include <iostream>
-#include "board.h"
+#include "game.h"
+#include "agent/human.h"
 using namespace std;
 
 
 int main() {
-    Board board;
-    board.print();
-    for(int i = 0; i < 10; i++) {
-        int h, w;
-        cin >> h >> w;
-        bool success = board.make_move(h, w);
-        cout << success << endl;
-        board.print();
-    }
+    Human player_b(BLACK);
+    Human player_w(WHITE);
+    Game game(&player_b, &player_w, true);
+    game.play();
     return 0;
 }
