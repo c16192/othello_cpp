@@ -1,4 +1,4 @@
 .idea
 *.exe
-**/build/
+/build/
 /data/
