@@ -27,3 +27,7 @@ void Human::apply_reward(double reward, bool final) {
         cout << "Whoops! Made a mistake!" << endl;
     }
 }
+
+void Human::print() {
+    cout << player << endl;
+}

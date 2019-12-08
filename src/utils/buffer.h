@@ -5,11 +5,11 @@ template <class T>
 class ReplayBuffer {
 private:
     T *buffer;
-    int size;
-    int count = 0;
     int head = 0;
 
 public:
+    int size;
+    int count = 0;
     ReplayBuffer(int _size): size(_size) {
         buffer = new T[size];
     }
@@ -18,11 +18,17 @@ public:
     }
     void push(T item) {
         buffer[head] = item;
-        if(count < size) count++;
+        if(!ReplayBuffer::full()) count++;
         head = (head + 1) % size;
     }
     T sample() {
         return buffer[rand() % count];
+    }
+    T last() {
+        return buffer[(head + size - 1) % size];
+    }
+    bool full() {
+        return count == size;
     }
 };
 

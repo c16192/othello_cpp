@@ -10,6 +10,7 @@ protected:
 public:
     virtual Board::Move make_move(char board[BOARD_SIZE][BOARD_SIZE]) = 0;
     virtual void apply_reward(double reward, bool final) = 0;
+    virtual void print() = 0;
 };
 
 

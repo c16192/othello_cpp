@@ -32,6 +32,10 @@ void Game::play() {
 }
 
 void Game::play_turn() {
+    if(comment) {
+        board.print();
+        cout << endl;
+    }
     Agent *agent = Game::currentAgent();
     bool pass = !board.exist_moves();
     passed[board.get_player() == WHITE] = pass;
