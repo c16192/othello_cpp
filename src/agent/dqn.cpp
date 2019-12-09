@@ -1,17 +1,27 @@
 #include "dqn.h"
 #include "../utils.h"
 #include <iostream>
+#include <cstring>
+#include <ctime>
 using namespace std;
 
 DQN::DQN(char _player) {
     player = _player;
-    memory = new ReplayBuffer<Experience>(64);
+    memory = new ReplayBuffer<Experience>(256);
+
     model = Net();
+
+    try {
+        torch::load(model, "../model/" + string(1, player) + ".pt");
+    } catch(const exception &e) {}
+
     optimizer = new torch::optim::Adam(model->parameters(), torch::optim::AdamOptions(1e-3));
     action = torch::zeros({2});
+
 }
 
 DQN::~DQN() {
+    torch::save(model, "../model/" + string(1, player) + ".pt");
     delete memory;
     delete optimizer;
 }
@@ -50,30 +60,33 @@ torch::Tensor DQN::board_to_state(char board[BOARD_SIZE][BOARD_SIZE]){
 
 void DQN::apply_reward(double _reward, bool final) {
     reward = _reward;
-//    if(!final && reward < 0) {
-//        cout << "Whoops! Made a mistake!" << "(" << action[0].item<int>() << " " << action[1].item<int>() << ")" << endl;
-//    }
+    if(final) reward *= 10;
+    cum_reward += reward;
     Experience e(state, action, reward, state, false);
     memory->push(e);
     if(final) {
         completed_episodes++;
+        cout << (player == WHITE ? "Black" : "White") << " got cumulative reward of: " << cum_reward << endl;
+        cum_reward = 0.0;
     }
 }
 
 void DQN::update_q() {
-    if(!memory->full()) return;
+    if(!memory->count) return;
 
     torch::Tensor states, loss, target_value, predicted_value;
     double next_value;
-    int BATCH_SIZE = 8;
+    int BATCH_SIZE = min(memory->count, 64);
 
     Experience e = memory->last();
     model->eval();
     target_value = torch::zeros({BATCH_SIZE});
+    states = torch::empty({BATCH_SIZE, 1, BOARD_SIZE, BOARD_SIZE});
     for(int i = 0; i < BATCH_SIZE; i++) {
         next_value = e.exists_state_next ? model->forward(e.state_next).max().item<double>() : 0.0;
         target_value[i] = e.reward + gamma * next_value;
         states[i] = e.state[0];
+        e = memory->sample();
     }
 
     model->train();
@@ -85,7 +98,6 @@ void DQN::update_q() {
 //        cout << loss << " " << e.reward << " " << predicted_value << " " << target_value << endl;
     loss.backward();
     optimizer->step();
-    e = memory->sample();
 }
 
 void DQN::decide_action() {

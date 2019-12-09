@@ -33,16 +33,42 @@ int main() {
         player_b = i != 3 ? (Agent *) &human_b : (Agent *) &comp_b;
         player_w = i == 1 ? (Agent *) &human_w : (Agent *) &comp_w;
 
-        cout << "Game " << ++count << " started!" << endl;
-        clock_t begin = clock();
+        cout << "How many times? ";
+        int max_times;
+        cin >> max_times;
+        cin.clear();
+        cin.ignore(INT_MAX, '\n');
+        while (cin.fail() || max_times < 0) {
+            cout << "You entered a wrong value. Try again: ";
+            cin >> max_times;
+            cin.clear();
+            cin.ignore(INT_MAX, '\n');
+        }
 
-        Game game(player_b, player_w, true);
-        game.play();
+        char comment;
+        cout << "Do you want detailed printouts? (y / n): ";
+        cin >> comment;
+        cin.clear();
+        cin.ignore(INT_MAX, '\n');
+        while (cin.fail() || (comment != 'y' && comment != 'n')) {
+            cout << "You entered a wrong value. Try again: ";
+            cin >> comment;
+            cin.clear();
+            cin.ignore(INT_MAX, '\n');
+        }
 
-        clock_t end = clock();
-        double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
+        for(int j = 0; j < max_times; j++) {
+            cout << "Game " << ++count << " started!" << endl;
+            clock_t begin = clock();
 
-        cout << "Game " << i << " took " << elapsed_secs << " sec" << endl << endl;
+            Game game(player_b, player_w, comment == 'y');
+            game.play();
+
+            clock_t end = clock();
+            double elapsed_secs = double(end - begin) / CLOCKS_PER_SEC;
+
+            cout << "Game " << count << " took " << elapsed_secs << " sec" << endl << endl;
+        }
     }
     return 0;
 }

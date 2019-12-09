@@ -18,6 +18,7 @@ private:
     torch::Tensor state;
     torch::Tensor action;
     double reward = 0.0;
+    double cum_reward = 0.0;
     bool is_first_round = true;
     int completed_episodes = 0;
     ReplayBuffer<Experience> *memory;

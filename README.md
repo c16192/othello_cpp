@@ -11,7 +11,7 @@ The object of the game is to have the majority of disks turned to display your c
 
 ## About the project
 This is an implementation of the board game Othello in C++. You can play human against human, human against computer, or computer against computer. 
-The computer agent has a basic Deep Q Network implementation (although currently it does not save and load the model, so it behaves like a random bot without training).
+The computer agent has a basic Deep Q Network implementation. Disclaimer: I have not evaluated the performance of it since training will take a long time, so there is no guarantee that this is bug-free.
 
 The human vs human implementation does not depend on any external libraries. The DQN agent is implemented using [LibTorch](https://pytorch.org/cppdocs/),
 an C++ API of PyTorch. 
