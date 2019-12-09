@@ -1,5 +1,5 @@
 # Othello Game in C++
-Developed by Shu Ishida (December 2019)
+Developed by Shu Ishida as a one-week project for AIMS CDT C++ programming (December 2019)
 
 ## Introduction to Othello
 
