@@ -32,7 +32,7 @@ Board::Move DQN::make_move(char board[BOARD_SIZE][BOARD_SIZE]){
 }
 
 Board::Move DQN::action_to_move() {
-    return Board::Move(action[0].item<int>(), action[1].item<int>());
+    return {action[0].item<int>(), action[1].item<int>()};
 }
 
 torch::Tensor DQN::board_to_state(char board[BOARD_SIZE][BOARD_SIZE]){
@@ -62,31 +62,30 @@ void DQN::apply_reward(double _reward, bool final) {
 
 void DQN::update_q() {
     if(!memory->full()) return;
-    torch::Tensor loss, output, next_value, target_value, predicted_value;
+
+    torch::Tensor states, loss, target_value, predicted_value;
+    double next_value;
+    int BATCH_SIZE = 8;
+
     Experience e = memory->last();
-    int BATCH_SIZE = 4;
+    model->eval();
+    target_value = torch::zeros({BATCH_SIZE});
     for(int i = 0; i < BATCH_SIZE; i++) {
-        model->eval();
-        next_value = torch::zeros({1, 1});
-        if(e.exists_state_next) {
-            next_value = model->forward(e.state_next).max().view({-1, 1});
-        }
-
-        target_value = e.reward + gamma * next_value;
-
-        model->train();
-
-        optimizer->zero_grad();
-
-        output = model->forward(e.state);
-        predicted_value = output[0][0][action[0].item<int>()][action[1].item<int>()].view({-1, 1});
-
-        loss = torch::pow(predicted_value - target_value, 2);
-//        cout << loss << " " << e.reward << " " << predicted_value << " " << target_value << endl;
-        loss.backward();
-        optimizer->step();
-        e = memory->sample();
+        next_value = e.exists_state_next ? model->forward(e.state_next).max().item<double>() : 0.0;
+        target_value[i] = e.reward + gamma * next_value;
+        states[i] = e.state[0];
     }
+
+    model->train();
+    optimizer->zero_grad();
+
+    predicted_value = model->forward(states).permute({1, 2, 3, 0})[0][action[0].item<int>()][action[1].item<int>()];
+
+    loss = torch::pow(predicted_value - target_value, 2).mean();
+//        cout << loss << " " << e.reward << " " << predicted_value << " " << target_value << endl;
+    loss.backward();
+    optimizer->step();
+    e = memory->sample();
 }
 
 void DQN::decide_action() {

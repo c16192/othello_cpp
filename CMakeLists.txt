@@ -9,3 +9,12 @@ ADD_EXECUTABLE(othello ${SOURCES})
 
 target_link_libraries(othello "${TORCH_LIBRARIES}")
 set_property(TARGET othello PROPERTY CXX_STANDARD 14)
+
+if (MSVC)
+    file(GLOB TORCH_DLLS "${TORCH_INSTALL_PREFIX}/lib/*.dll")
+    add_custom_command(TARGET othello
+            POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            ${TORCH_DLLS}
+            $<TARGET_FILE_DIR:othello>)
+endif (MSVC)

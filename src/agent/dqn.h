@@ -17,7 +17,7 @@ private:
     torch::optim::Adam *optimizer;
     torch::Tensor state;
     torch::Tensor action;
-    double reward;
+    double reward = 0.0;
     bool is_first_round = true;
     int completed_episodes = 0;
     ReplayBuffer<Experience> *memory;
