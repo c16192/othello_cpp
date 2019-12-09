@@ -17,7 +17,6 @@ DQN::~DQN() {
 }
 
 Board::Move DQN::make_move(char board[BOARD_SIZE][BOARD_SIZE]){
-//    print_board(board);
     torch::Tensor state_new = DQN::board_to_state(board);
     if(!is_first_round) {
         Experience e(state, action, reward, state_new);

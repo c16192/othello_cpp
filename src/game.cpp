@@ -16,8 +16,7 @@ void Game::play() {
     }
     Board::Score score = board.get_result();
     if(comment) {
-        cout << "Game over!" << endl;
-        cout << "Black: " << score.black << ", White: " << score.white << endl;
+        cout << "Game Over! Black: " << score.black << ", White: " << score.white << endl;
     }
     double reward_b;
     if (score.black > score.white) {

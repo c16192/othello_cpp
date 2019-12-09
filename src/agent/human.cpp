@@ -12,11 +12,13 @@ Board::Move Human::make_move(char board[BOARD_SIZE][BOARD_SIZE]) {
     cout << "It is " << (player == WHITE ? "white" : "black") << "'s turn! Play your move (h, w): ";
     int h, w;
     cin >> h >> w;
+    cin.clear();
+    cin.ignore(10000, '\n');
     while (cin.fail()) {
         cout << "h and w has to be integer values between 0-7, separated by a space. Try again: ";
+        cin >> h >> w;
         cin.clear();
         cin.ignore(10000, '\n');
-        cin >> h >> w;
     }
     Board::Move move(h, w);
     return move;
