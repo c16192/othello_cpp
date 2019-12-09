@@ -26,9 +26,10 @@ For more information, please refer to the [installation instructions](https://py
 
 2. Install `cmake` 
 3. Clone this repository: `git clone https://github.com/c16192/othello_cpp.git`
-4. Create a 'build' subdirectory in the root directory.
+4. Create "build" and "model" subdirectories in the root directory.
    ```
    cd othello_cpp   # moving into root directory
+   mkdir model      # making a directory called "model"
    mkdir build      # making a directory called "build"
    cd build         # moving into the "build" directory
    ```
